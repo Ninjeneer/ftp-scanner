@@ -1,4 +1,6 @@
-package tools.ftp.scanner;
+package model.tools.ftp.scanner;
+
+import model.tools.ftp.FTPClient;
 
 import java.util.Arrays;
 import java.util.HashMap;

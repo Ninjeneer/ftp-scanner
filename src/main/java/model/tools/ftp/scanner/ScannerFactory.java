@@ -1,4 +1,4 @@
-package tools.ftp.scanner;
+package model.tools.ftp.scanner;
 
 public class ScannerFactory {
     public static FTPScanner createAnonymousScanner(int timeout) {

@@ -1,4 +1,4 @@
-package tools.ftp.scanner;
+package model.tools.ftp;
 
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPReply;
