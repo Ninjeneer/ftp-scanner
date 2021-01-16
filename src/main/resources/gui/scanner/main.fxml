@@ -7,26 +7,27 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TreeView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
 
-<BorderPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GUIController">
+<BorderPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/15.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <center>
       <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0">
          <children>
             <TabPane layoutY="31.0" prefHeight="348.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
               <tabs>
                 <Tab text="Scanner">
-                  <content>
+                    <content>
+                        <fx:include fx:id="scannerContent" source="scanner.fxml" />
+                    </content>
+                </Tab>
+                  <Tab text="FTP Client">
+                     <content>
                         <BorderPane>
                            <bottom>
                               <AnchorPane BorderPane.alignment="CENTER">
@@ -36,11 +37,11 @@
                                  <children>
                                     <ButtonBar layoutX="386.0" prefHeight="40.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0">
                                        <buttons>
-                                          <Button fx:id="stopButton" mnemonicParsing="false" onAction="#stopScanner" text="Stop" />
-                                          <Button fx:id="startButton" mnemonicParsing="false" onAction="#startScanner" text="Start" />
+                                          <Button fx:id="stopButton1" mnemonicParsing="false" text="Stop" />
+                                          <Button fx:id="startButton1" mnemonicParsing="false" text="Start" />
                                        </buttons>
                                     </ButtonBar>
-                                    <Label fx:id="scannerStatus" layoutX="14.0" layoutY="11.0" text="Scanner not ready" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="11.0" />
+                                    <Label fx:id="scannerStatus1" layoutX="14.0" layoutY="11.0" text="Scanner not ready" AnchorPane.bottomAnchor="11.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="11.0" />
                                  </children>
                                  <padding>
                                     <Insets right="14.0" />
@@ -50,35 +51,14 @@
                            <center>
                               <SplitPane dividerPositions="0.3" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                                  <items>
-                                    <TreeView fx:id="fileTree" prefHeight="200.0" prefWidth="200.0" />
+                                    <TreeView fx:id="fileTree1" prefHeight="200.0" prefWidth="200.0" />
                                     <Pane prefHeight="200.0" prefWidth="200.0" />
                                  </items>
                               </SplitPane>
                            </center>
                         </BorderPane>
-                  </content>
-                </Tab>
-                <Tab text="Settings">
-                  <content>
-                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
-                           <children>
-                              <GridPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="ALWAYS" />
-                                </rowConstraints>
-                                 <children>
-                                    <RadioButton mnemonicParsing="false" text="Single IP" />
-                                    <RadioButton mnemonicParsing="false" text="Range IP" GridPane.columnIndex="1" />
-                                 </children>
-                              </GridPane>
-                           </children>
-                        </AnchorPane>
-                  </content>
-                </Tab>
+                     </content>
+                  </Tab>
               </tabs>
             </TabPane>
          </children>
