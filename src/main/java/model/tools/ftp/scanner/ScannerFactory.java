@@ -5,7 +5,7 @@ public class ScannerFactory {
         return new FTPScanner("anonymous", "@nonymous", timeout);
     }
 
-    public static FTPScanner createScanner(String user, String password) {
-        return new FTPScanner(user, password, 1000);
+    public static FTPScanner createScanner(String user, String password, int timeout) {
+        return new FTPScanner(user, password, timeout);
     }
 }

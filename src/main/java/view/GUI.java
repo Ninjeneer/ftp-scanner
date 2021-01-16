@@ -12,7 +12,7 @@ public class GUI extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("gui/scanner.fxml")));
+        Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getClassLoader().getResource("gui/scanner/main.fxml")));
         Scene scene = new Scene(root, 800, 500);
         stage.setTitle("Scanner");
         stage.setScene(scene);

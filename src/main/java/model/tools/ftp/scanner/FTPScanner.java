@@ -2,21 +2,22 @@ package model.tools.ftp.scanner;
 
 import model.tools.ftp.FTPClient;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class FTPScanner {
     private final FTPClient ftpClient;
+    private final List<ScannerListener> listeners;
 
     FTPScanner(String user, String password, int timeout) {
         this.ftpClient = new FTPClient(user, password, timeout);
+        this.listeners = new ArrayList<>();
     }
 
-    public boolean scanUniqueIp(String host, int port) {
+    public Map<String, Boolean> scanUniqueIp(String host, int port) {
         System.out.printf("Opening connexion to %-22s%5s", host + ":" + port + "...", "");
-        boolean result = this.ftpClient.testConnexion(host, port);
-        System.out.println(result ? "SUCCESS" : "FAILED");
+        Map<String, Boolean> result = this.scanRangeIp(host, host, port);
+        System.out.println(result.entrySet().iterator().next().getValue() ? "SUCCESS" : "FAILED");
+        this.triggerListeners(result);
         return result;
     }
 
@@ -30,11 +31,21 @@ public class FTPScanner {
                 for (int byte3 = bytesStart[2]; byte3 <= bytesStop[2]; byte3++) {
                     for (int byte4 = bytesStart[3]; byte4 <= bytesStop[3]; byte4++) {
                         String host = String.format("%d.%d.%d.%d", byte1, byte2, byte3, byte4);
-                        results.put(host, this.scanUniqueIp(host, port));
+                        results.put(host, this.ftpClient.testConnexion(host, port));
                     }
                 }
             }
         }
         return results;
+    }
+
+    public void addListener(ScannerListener s) {
+        this.listeners.add(s);
+    }
+
+    private void triggerListeners(Map<String, Boolean> data) {
+        for (ScannerListener s : this.listeners) {
+            s.onScannerResult(data);
+        }
     }
 }
