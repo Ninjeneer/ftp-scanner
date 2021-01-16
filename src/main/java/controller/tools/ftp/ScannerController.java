@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.util.Callback;
+import model.tools.ftp.scanner.ScanMode;
 import model.tools.ftp.scanner.ScannerFactory;
 import model.tools.ftp.scanner.FTPScanner;
 import model.tools.ftp.scanner.ScannerListener;
@@ -31,6 +32,8 @@ public class ScannerController implements Initializable, ScannerListener {
     @FXML
     private RadioButton scanModeRange;
     @FXML
+    private TextField port;
+    @FXML
     private TextField singleIp;
     @FXML
     private TextField lowerIp;
@@ -41,6 +44,7 @@ public class ScannerController implements Initializable, ScannerListener {
     @FXML
     private TableView<Map.Entry<String, Boolean>> scannerResult;
 
+    private ScanMode scanMode;
     // FTP Scanner
     private FTPScanner scanner;
 
@@ -49,6 +53,7 @@ public class ScannerController implements Initializable, ScannerListener {
         this.scannerStatus.setText("Scanner not ready");
         this.scanner = ScannerFactory.createAnonymousScanner(1000);
         this.scanner.addListener(this);
+        this.scanMode = ScanMode.SINGLE;
         this.scannerStatus.setText("Scanner ready");
 
         // Initialize table view
@@ -65,7 +70,12 @@ public class ScannerController implements Initializable, ScannerListener {
         this.stopButton.setDisable(false);
         this.startButton.setDisable(true);
         this.scannerStatus.setText("Scanner started !");
-        this.scanner.scanUniqueIp(this.singleIp.getText(), 21);
+        this.scannerResult.getItems().removeAll(this.scannerResult.getItems());
+        if (scanMode == ScanMode.SINGLE) {
+            this.scanner.scanUniqueIp(this.singleIp.getText(), Integer.parseInt(this.port.getText()));
+        } else if (scanMode == ScanMode.RANGE) {
+            this.scanner.scanRangeIp(this.lowerIp.getText(), this.upperIp.getText(), Integer.parseInt(this.port.getText()));
+        }
     }
 
     public void stopScanner() {
@@ -78,12 +88,14 @@ public class ScannerController implements Initializable, ScannerListener {
     public void changeScanMode(ActionEvent e) {
         if (e.getSource() == this.scanModeSingle) {
             System.out.println("Switched to single scan mode");
+            this.scanMode = ScanMode.SINGLE;
             this.singleIp.setDisable(false);
             this.lowerIp.setDisable(true);
             this.upperIp.setDisable(true);
             this.excludeBounds.setDisable(true);
         } else if (e.getSource() == this.scanModeRange) {
             System.out.println("Switched to range scan mode");
+            this.scanMode = ScanMode.RANGE;
             this.singleIp.setDisable(true);
             this.lowerIp.setDisable(false);
             this.upperIp.setDisable(false);
@@ -92,6 +104,7 @@ public class ScannerController implements Initializable, ScannerListener {
     }
 
     public void onScannerResult(Map<String, Boolean> data) {
+        System.out.println("trigger");
         ObservableList<Map.Entry<String, Boolean>> items = FXCollections.observableArrayList(data.entrySet());
         this.scannerResult.getItems().setAll(items);
     }

@@ -14,9 +14,7 @@ public class FTPScanner {
     }
 
     public Map<String, Boolean> scanUniqueIp(String host, int port) {
-        System.out.printf("Opening connexion to %-22s%5s", host + ":" + port + "...", "");
         Map<String, Boolean> result = this.scanRangeIp(host, host, port);
-        System.out.println(result.entrySet().iterator().next().getValue() ? "SUCCESS" : "FAILED");
         this.triggerListeners(result);
         return result;
     }
@@ -31,7 +29,11 @@ public class FTPScanner {
                 for (int byte3 = bytesStart[2]; byte3 <= bytesStop[2]; byte3++) {
                     for (int byte4 = bytesStart[3]; byte4 <= bytesStop[3]; byte4++) {
                         String host = String.format("%d.%d.%d.%d", byte1, byte2, byte3, byte4);
-                        results.put(host, this.ftpClient.testConnexion(host, port));
+                        System.out.printf("Opening connexion to %-22s%5s", host + ":" + port + "...", "");
+                        boolean result = this.ftpClient.testConnexion(host, port);
+                        results.put(host, result);
+                        System.out.println(result ? "SUCCESS" : "FAILED");
+                        this.triggerListeners(results);
                     }
                 }
             }

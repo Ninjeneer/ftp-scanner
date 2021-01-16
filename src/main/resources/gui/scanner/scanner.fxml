@@ -35,19 +35,21 @@
    <left>
       <AnchorPane prefHeight="398.0" prefWidth="295.0" BorderPane.alignment="CENTER">
          <children>
-            <RadioButton fx:id="scanModeSingle" layoutX="14.0" layoutY="14.0" mnemonicParsing="false" onAction="#changeScanMode" selected="true" text="Single IP scanner">
+            <RadioButton fx:id="scanModeSingle" layoutX="12.0" layoutY="73.0" mnemonicParsing="false" onAction="#changeScanMode" selected="true" text="Single IP scanner">
                <toggleGroup>
                   <ToggleGroup fx:id="scannerType" />
                </toggleGroup>
             </RadioButton>
-            <TextField fx:id="singleIp" layoutX="62.0" layoutY="46.0" promptText="Target IP" text="0.0.0.0" />
-            <Label layoutX="34.0" layoutY="51.0" text="IP :" />
-            <RadioButton fx:id="scanModeRange" layoutX="14.0" layoutY="102.0" mnemonicParsing="false" onAction="#changeScanMode" text="Range IP scanner" toggleGroup="$scannerType" />
-            <TextField fx:id="lowerIp" disable="true" layoutX="97.0" layoutY="134.0" />
-            <Label layoutX="34.0" layoutY="139.0" text="Start IP :" />
-            <Label layoutX="36.0" layoutY="175.0" text="Stop IP :" />
-            <TextField fx:id="upperIp" disable="true" layoutX="97.0" layoutY="170.0" />
-            <CheckBox fx:id="excludeBounds" disable="true" layoutX="34.0" layoutY="218.0" mnemonicParsing="false" text="Excluse bounds" />
+            <TextField fx:id="singleIp" layoutX="60.0" layoutY="105.0" promptText="Target IP" text="0.0.0.0" />
+            <Label layoutX="32.0" layoutY="110.0" text="IP :" />
+            <RadioButton fx:id="scanModeRange" layoutX="14.0" layoutY="167.0" mnemonicParsing="false" onAction="#changeScanMode" text="Range IP scanner" toggleGroup="$scannerType" />
+            <TextField fx:id="lowerIp" disable="true" layoutX="97.0" layoutY="199.0" />
+            <Label layoutX="34.0" layoutY="204.0" text="Start IP :" />
+            <Label layoutX="36.0" layoutY="240.0" text="Stop IP :" />
+            <TextField fx:id="upperIp" disable="true" layoutX="97.0" layoutY="235.0" />
+            <CheckBox fx:id="excludeBounds" disable="true" layoutX="34.0" layoutY="283.0" mnemonicParsing="false" text="Excluse bounds" />
+            <TextField fx:id="port" layoutX="50.0" layoutY="24.0" prefHeight="28.0" prefWidth="151.0" promptText="Target port" text="21" />
+            <Label layoutX="12.0" layoutY="29.0" text="Port :" />
          </children>
       </AnchorPane>
    </left>
