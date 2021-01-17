@@ -1,25 +1,23 @@
 package controller.tools.ftp;
 
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.util.Callback;
+import model.tools.ftp.scanner.FTPScanner;
 import model.tools.ftp.scanner.ScanMode;
 import model.tools.ftp.scanner.ScannerFactory;
-import model.tools.ftp.scanner.FTPScanner;
-import model.tools.ftp.scanner.ScannerListener;
+import model.tools.ftp.scanner.FTPScannerObserver;
 
 import java.net.URL;
-import java.util.Collection;
 import java.util.Map;
 import java.util.ResourceBundle;
 
-public class ScannerController implements Initializable, ScannerListener {
+public class FTPScannerController implements Initializable, FTPScannerObserver {
     // FXML controls
     @FXML
     private Button startButton;
@@ -67,9 +65,6 @@ public class ScannerController implements Initializable, ScannerListener {
 
     public void startScanner() {
         System.out.println("start");
-        this.stopButton.setDisable(false);
-        this.startButton.setDisable(true);
-        this.scannerStatus.setText("Scanner started !");
         this.scannerResult.getItems().removeAll(this.scannerResult.getItems());
         if (scanMode == ScanMode.SINGLE) {
             this.scanner.scanUniqueIp(this.singleIp.getText(), Integer.parseInt(this.port.getText()));
@@ -80,9 +75,6 @@ public class ScannerController implements Initializable, ScannerListener {
 
     public void stopScanner() {
         System.out.println("stop");
-        this.stopButton.setDisable(true);
-        this.startButton.setDisable(false);
-        this.scannerStatus.setText("Scanner ready");
     }
 
     public void changeScanMode(ActionEvent e) {
@@ -103,9 +95,46 @@ public class ScannerController implements Initializable, ScannerListener {
         }
     }
 
+    @Override
+    public void onScannerStart() {
+        this.startButton.setDisable(true);
+        this.stopButton.setDisable(false);
+        Platform.runLater(() -> {
+            this.scannerStatus.setText("Scanner started !");
+        });
+    }
+
+    @Override
     public void onScannerResult(Map<String, Boolean> data) {
         System.out.println("trigger");
-        ObservableList<Map.Entry<String, Boolean>> items = FXCollections.observableArrayList(data.entrySet());
-        this.scannerResult.getItems().setAll(items);
+        System.out.println(data);
+        Platform.runLater(() -> {
+            ObservableList<Map.Entry<String, Boolean>> items = FXCollections.observableArrayList(data.entrySet());
+            this.scannerResult.getItems().setAll(items);
+        });
+    }
+
+    @Override
+    public void onScannerStop() {
+        this.stopButton.setDisable(true);
+        this.startButton.setDisable(false);
+        Platform.runLater(() -> {
+            this.scannerStatus.setText("Scanner finished");
+        });
+    }
+
+    @Override
+    public void onScannerError(String message, Exception e) {
+        Platform.runLater(() -> {
+            this.showError("Error", message, e.getMessage());
+        });
+    }
+
+    private void showError(String title, String header, String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

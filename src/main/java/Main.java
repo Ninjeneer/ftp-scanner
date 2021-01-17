@@ -2,6 +2,10 @@ import model.tools.ftp.scanner.FTPScanner;
 import model.tools.ftp.scanner.ScannerFactory;
 import view.GUI;
 
+import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.Arrays;
 import java.util.Map;
 
 public class Main {
@@ -11,12 +15,7 @@ public class Main {
             g.start();
         } else {
             FTPScanner s = ScannerFactory.createAnonymousScanner(Integer.parseInt(args[3]));
-            Map<String, Boolean> m = s.scanRangeIp(args[0], args[1], Integer.parseInt(args[2]));
-            for (Map.Entry<String, Boolean> e : m.entrySet()) {
-                if (e.getValue()) {
-                    System.out.println(e.getKey() + " ==> SUCCESS");
-                }
-            }
+            s.scanRangeIp(args[0], args[1], Integer.parseInt(args[2]));
         }
     }
 }
