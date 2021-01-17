@@ -50,6 +50,9 @@
             <CheckBox fx:id="excludeBounds" disable="true" layoutX="34.0" layoutY="283.0" mnemonicParsing="false" text="Excluse bounds" />
             <TextField fx:id="port" layoutX="50.0" layoutY="24.0" prefHeight="28.0" prefWidth="151.0" promptText="Target port" text="21" />
             <Label layoutX="12.0" layoutY="29.0" text="Port :" />
+            <RadioButton fx:id="scanModeMonkey" layoutX="14.0" layoutY="328.0" mnemonicParsing="false" onAction="#changeScanMode" text="Monkey IP scanner" toggleGroup="$scannerType" />
+            <Label layoutX="37.0" layoutY="361.0" text="Number of IP :" />
+            <TextField fx:id="numberOfIp" disable="true" layoutX="144.0" layoutY="356.0" prefHeight="28.0" prefWidth="114.0" promptText="Number of IP to scan" text="10" />
          </children>
       </AnchorPane>
    </left>

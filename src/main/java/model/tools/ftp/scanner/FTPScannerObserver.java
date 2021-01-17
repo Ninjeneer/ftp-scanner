@@ -3,7 +3,7 @@ import java.util.Map;
 
 public interface FTPScannerObserver {
     void onScannerStart();
-    void onScannerResult(Map<String, Boolean> data);
+    void onScannerResult(String host, boolean result);
     void onScannerStop();
     void onScannerError(String message, Exception e);
 }

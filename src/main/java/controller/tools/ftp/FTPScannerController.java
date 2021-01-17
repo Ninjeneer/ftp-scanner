@@ -2,19 +2,17 @@ package controller.tools.ftp;
 
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import model.tools.ftp.scanner.FTPScanner;
+import model.tools.ftp.scanner.FTPScannerObserver;
 import model.tools.ftp.scanner.ScanMode;
 import model.tools.ftp.scanner.ScannerFactory;
-import model.tools.ftp.scanner.FTPScannerObserver;
+import view.tools.ftp.scanner.ScannerResult;
 
 import java.net.URL;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 public class FTPScannerController implements Initializable, FTPScannerObserver {
@@ -30,6 +28,8 @@ public class FTPScannerController implements Initializable, FTPScannerObserver {
     @FXML
     private RadioButton scanModeRange;
     @FXML
+    private RadioButton scanModeMonkey;
+    @FXML
     private TextField port;
     @FXML
     private TextField singleIp;
@@ -40,7 +40,9 @@ public class FTPScannerController implements Initializable, FTPScannerObserver {
     @FXML
     private CheckBox excludeBounds;
     @FXML
-    private TableView<Map.Entry<String, Boolean>> scannerResult;
+    private TextField numberOfIp;
+    @FXML
+    private TableView<ScannerResult> scannerResult;
 
     private ScanMode scanMode;
     // FTP Scanner
@@ -55,11 +57,11 @@ public class FTPScannerController implements Initializable, FTPScannerObserver {
         this.scannerStatus.setText("Scanner ready");
 
         // Initialize table view
-        TableColumn<Map.Entry<String, Boolean>, String> column1 = new TableColumn<>("IP");
-        column1.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getKey()));
+        TableColumn<ScannerResult, String> column1 = new TableColumn<>("IP");
+        column1.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().host));
 
-        TableColumn<Map.Entry<String, Boolean>, String> column2 = new TableColumn<>("Result");
-        column2.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().getValue() ? "SUCCESS" : "FAILED"));
+        TableColumn<ScannerResult, String> column2 = new TableColumn<>("Result");
+        column2.setCellValueFactory(p -> new SimpleStringProperty(p.getValue().result ? "SUCCESS" : "FAILED"));
         this.scannerResult.getColumns().setAll(column1, column2);
     }
 
@@ -70,6 +72,8 @@ public class FTPScannerController implements Initializable, FTPScannerObserver {
             this.scanner.scanUniqueIp(this.singleIp.getText(), Integer.parseInt(this.port.getText()));
         } else if (scanMode == ScanMode.RANGE) {
             this.scanner.scanRangeIp(this.lowerIp.getText(), this.upperIp.getText(), Integer.parseInt(this.port.getText()));
+        } else if (scanMode == ScanMode.MONKEY) {
+            this.scanner.scanMonkey(Integer.parseInt(this.numberOfIp.getText()), Integer.parseInt(this.port.getText()));
         }
     }
 
@@ -85,6 +89,7 @@ public class FTPScannerController implements Initializable, FTPScannerObserver {
             this.lowerIp.setDisable(true);
             this.upperIp.setDisable(true);
             this.excludeBounds.setDisable(true);
+            this.numberOfIp.setDisable(true);
         } else if (e.getSource() == this.scanModeRange) {
             System.out.println("Switched to range scan mode");
             this.scanMode = ScanMode.RANGE;
@@ -92,6 +97,15 @@ public class FTPScannerController implements Initializable, FTPScannerObserver {
             this.lowerIp.setDisable(false);
             this.upperIp.setDisable(false);
             this.excludeBounds.setDisable(false);
+            this.numberOfIp.setDisable(true);
+        } else if (e.getSource() == this.scanModeMonkey) {
+            System.out.println("Switched to monkey scan mode");
+            this.scanMode = ScanMode.MONKEY;
+            this.singleIp.setDisable(true);
+            this.lowerIp.setDisable(true);
+            this.upperIp.setDisable(true);
+            this.excludeBounds.setDisable(true);
+            this.numberOfIp.setDisable(false);
         }
     }
 
@@ -105,12 +119,10 @@ public class FTPScannerController implements Initializable, FTPScannerObserver {
     }
 
     @Override
-    public void onScannerResult(Map<String, Boolean> data) {
-        System.out.println("trigger");
-        System.out.println(data);
+    public void onScannerResult(String host, boolean result) {
         Platform.runLater(() -> {
-            ObservableList<Map.Entry<String, Boolean>> items = FXCollections.observableArrayList(data.entrySet());
-            this.scannerResult.getItems().setAll(items);
+            ScannerResult sr = new ScannerResult(host, result);
+            this.scannerResult.getItems().add(sr);
         });
     }
 

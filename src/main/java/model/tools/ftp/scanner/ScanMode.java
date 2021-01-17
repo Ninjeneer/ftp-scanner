@@ -1,5 +1,5 @@
 package model.tools.ftp.scanner;
 
 public enum ScanMode {
-    SINGLE, RANGE
+    SINGLE, RANGE, MONKEY
 }

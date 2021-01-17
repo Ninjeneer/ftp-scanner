@@ -3,6 +3,7 @@ package model.tools.ftp.scanner;
 import model.tools.ScannerObservable;
 import model.tools.ftp.FTPClient;
 
+import java.io.IOException;
 import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -17,14 +18,28 @@ public class FTPScanner implements ScannerObservable {
         this.listeners = new ArrayList<>();
     }
 
+    private boolean scan(String host, int port) {
+        if (ftpClient.testConnexion(host, port)) {
+            try {
+                ftpClient.open(host, port);
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+    }
+
     public void scanUniqueIp(String host, int port) {
-        this.scanRangeIp(host, host, port);
+        this.triggerListenersForStart();
+        this.scan(host, port);
+        this.triggerListenersForStop();
     }
 
     public void scanRangeIp(String hostRangeStart, String hostRangeStop, int port) {
         new Thread(() -> {
             triggerListenersForStart();
-            Map<String, Boolean> results = new HashMap<>();
             // Transform String IP Address to BigIntegers
             BigInteger intStart = null;
             BigInteger intStop = null;
@@ -44,10 +59,33 @@ public class FTPScanner implements ScannerObservable {
                 int[] ipBytes = bigIntegerToBytes(i);
                 String host = String.format("%d.%d.%d.%d", ipBytes[0], ipBytes[1], ipBytes[2], ipBytes[3]);
                 System.out.printf("Opening connexion to %-22s%5s", host + ":" + port + "...", "");
-                boolean result = ftpClient.testConnexion(host, port);
-                results.put(host, result);
+                boolean result = this.scan(host, port);
                 System.out.println(result ? "SUCCESS" : "FAILED");
-                triggerListenersForData(results);
+                triggerListenersForData(host, result);
+            }
+            triggerListenersForStop();
+        }).start();
+    }
+
+    public void scanMonkey(int nbIp, int port) {
+        new Thread(() -> {
+            triggerListenersForStart();
+            try {
+                Random r = new Random();
+                String[] ipArray = new String[nbIp];
+                for (int i = 0; i < nbIp; i++) {
+                    String newIp;
+                    do {
+                        newIp = r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256) + "." + r.nextInt(256);
+                    } while (InetAddress.getByName(newIp).isSiteLocalAddress());
+                    ipArray[i] = newIp;
+                }
+
+                for (String ip : ipArray) {
+                    this.triggerListenersForData(ip, this.scan(ip, port));
+                }
+            } catch (Exception e) {
+                this.triggerListenersWithError("Monkey Scan Error", e);
             }
             triggerListenersForStop();
         }).start();
@@ -73,12 +111,14 @@ public class FTPScanner implements ScannerObservable {
 
     @Override
     public void triggerListenersWithError(String message, Exception e) {
-
+        for (FTPScannerObserver s : this.listeners) {
+            s.onScannerError(message, e);
+        }
     }
 
-    private void triggerListenersForData(Map<String, Boolean> data) {
+    private void triggerListenersForData(String host, boolean result) {
         for (FTPScannerObserver s : this.listeners) {
-            s.onScannerResult(data);
+            s.onScannerResult(host, result);
         }
     }
 
