@@ -5,3 +5,7 @@ A simple Anonymous Mode FTP Scanner providing 3 modes :
 - Monkey Scan (Testing X random IP)
 
 Written in Java + JavaFX
+
+## Planned features
+- SSH Scanner
+- Nmap Scanner + CVE reporter
